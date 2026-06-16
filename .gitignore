@@ -50,3 +50,5 @@ vault-data/
 # Temporary Files
 tmp/
 temp/
+
+unsealkey.txt
