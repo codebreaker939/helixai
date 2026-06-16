@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from database import SessionLocal
+from models import Patient
 
 app = FastAPI()
 
@@ -10,21 +12,23 @@ def home():
     }
 
 @app.get("/patients")
-def patients():
-    return {
-        "total_patients": 1000,
-        "active_patients": 850
-    }
+def get_patients():
 
-@app.get("/genomics")
-def genomics():
-    return {
-        "genomic_jobs": 5000,
-        "completed_jobs": 4500
-    }
+    db = SessionLocal()
 
-@app.get("/health")
-def health():
-    return {
-        "service": "healthy"
-    }
+    patients = db.query(Patient).all()
+
+    result = []
+
+    for p in patients:
+        result.append({
+            "id": p.id,
+            "full_name": p.full_name,
+            "age": p.age,
+            "gender": p.gender,
+            "disease": p.disease
+        })
+
+    db.close()
+
+    return result
