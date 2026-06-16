@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: helixai-config
+data:
+  POSTGRES_DB: helixai_db
+  POSTGRES_USER: helixai

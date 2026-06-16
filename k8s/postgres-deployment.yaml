@@ -19,8 +19,18 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: helixai_db
+              valueFrom:
+                configMapKeyRef:
+                  name: helixai-config
+                  key: POSTGRES_DB
             - name: POSTGRES_USER
-              value: helixai
+              valueFrom:
+                configMapKeyRef:
+                  name: helixai-config
+                  key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
-              value: helixai123
+              valueFrom:
+                secretKeyRef:
+                  name: helixai-secret
+                  key: POSTGRES_PASSWORD
+            

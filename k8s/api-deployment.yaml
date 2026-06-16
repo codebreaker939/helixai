@@ -20,4 +20,8 @@ spec:
             - containerPort: 8000
           env:
             - name: DATABASE_URL
-              value: postgresql://helixai:helixai123@helixai-postgres-service:5432/helixai_db
+              valueFrom:
+                secretKeyRef:
+                  name: helixai-secret
+                  key: DATABASE_URL
+            
