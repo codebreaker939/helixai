@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helixai-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: helixai-api
+  template:
+    metadata:
+      labels:
+        app: helixai-api
+    spec:
+      containers:
+        - name: helixai-api
+          image: helixai-api:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_URL
+              value: postgresql://helixai:helixai123@helixai-postgres-service:5432/helixai_db

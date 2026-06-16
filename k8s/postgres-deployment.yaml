@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helixai-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: helixai-postgres
+  template:
+    metadata:
+      labels:
+        app: helixai-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: helixai_db
+            - name: POSTGRES_USER
+              value: helixai
+            - name: POSTGRES_PASSWORD
+              value: helixai123
