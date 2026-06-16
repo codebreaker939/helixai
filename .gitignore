@@ -52,3 +52,9 @@ tmp/
 temp/
 
 unsealkey.txt
+unsealkey.txt
+*.tfstate
+terraform.tfstate
+.terraform/
+venv/
+__pycache__/
