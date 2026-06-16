@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environment
+venv/
+env/
+.venv
+
+# Environment Variables
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Pytest
+.pytest_cache/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Database Files
+*.db
+*.sqlite3
+
+# Terraform (for later)
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# Kubernetes
+kubeconfig
+
+# Jenkins
+jenkins_home/
+
+# Vault
+vault-data/
+
+# Temporary Files
+tmp/
+temp/
