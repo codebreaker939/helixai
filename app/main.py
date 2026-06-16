@@ -1,11 +1,12 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
-
+from pydantic import BaseModel 
+from models import Base
+from database import engine
 from database import SessionLocal
 from models import Patient
 
 app = FastAPI()
-
+Base.metadata.create_all(bind=engine)
 
 class PatientCreate(BaseModel):
     full_name: str
