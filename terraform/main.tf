@@ -1,18 +1,18 @@
 terraform {
-required_providers {
-local = {
-source = "hashicorp/local"
-version = "~> 2.4"
-}
-}
+  required_providers {
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.4"
+    }
+  }
 }
 
 provider "local" {}
 
 resource "local_file" "helixai_infra" {
-filename = "helixai-infrastructure.txt"
+  filename = "helixai-infrastructure.txt"
 
-content = <<EOT
+  content = <<EOT
 HelixAI Infrastructure
 
 Kubernetes Cluster
