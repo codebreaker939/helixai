@@ -265,7 +265,13 @@ cd helixai
 ### Start Application
 
 ```bash
-docker-compose up -d
+docker compose -f docker/docker-compose.yml up -d
+```
+
+### Start Application With Dashboards
+
+```bash
+docker compose -f docker/docker-compose.yml --profile dashboards up -d
 ```
 
 ### Verify Containers
@@ -284,6 +290,31 @@ http://localhost:8000
 
 ```text
 http://localhost:8000/docs
+```
+
+### Local Dashboards
+
+```text
+FastAPI Swagger: http://localhost:8000/docs
+Grafana: http://localhost:3001
+Prometheus: http://localhost:9091
+Loki API: http://localhost:3100/ready
+Vault UI: http://localhost:8200
+Jenkins: http://localhost:8081
+PostgreSQL Adminer: http://localhost:8082
+```
+
+Default local credentials:
+
+```text
+Grafana: admin / admin
+Vault token: root
+Adminer:
+  System: PostgreSQL
+  Server: postgres
+  Username: helixai
+  Password: helixai123
+  Database: helixai_db
 ```
 
 ---
@@ -305,13 +336,31 @@ http://localhost:8000/docs
 ### Grafana Dashboard
 
 ```text
-http://localhost:3000
+http://localhost:3001
 ```
 
 ### Prometheus
 
 ```text
-http://localhost:9090
+http://localhost:9091
+```
+
+### Vault UI
+
+```text
+http://localhost:8200
+```
+
+### Jenkins
+
+```text
+http://localhost:8081
+```
+
+### PostgreSQL Adminer
+
+```text
+http://localhost:8082
 ```
 
 > Replace these URLs with your deployed endpoints once hosted.
