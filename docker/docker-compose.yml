@@ -59,6 +59,23 @@ services:
       - "--web.console.libraries=/usr/share/prometheus/console_libraries"
       - "--web.console.templates=/usr/share/prometheus/consoles"
 
+  promtail:
+    image: grafana/promtail:3.5.8
+
+    container_name: helixai-promtail
+
+    profiles:
+      - dashboards
+
+    depends_on:
+      - loki
+
+    volumes:
+      - ../logging/promtail-config.yml:/etc/promtail/config.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+    command: ["-config.file=/etc/promtail/config.yml"]
+
   grafana:
     image: grafana/grafana:12.3.0
 
@@ -81,6 +98,7 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
       - ../monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ../monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
 
   loki:
     image: grafana/loki:3.5.8
@@ -116,6 +134,30 @@ services:
     environment:
       VAULT_DEV_ROOT_TOKEN_ID: root
       VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+
+  vault-init:
+    image: hashicorp/vault:1.21.1
+
+    container_name: helixai-vault-init
+
+    profiles:
+      - dashboards
+
+    depends_on:
+      - vault
+
+    environment:
+      VAULT_ADDR: http://vault:8200
+      VAULT_TOKEN: root
+
+    command:
+      - sh
+      - -c
+      - |
+        until vault status >/dev/null 2>&1; do sleep 2; done
+        vault kv put secret/helixai/database username=helixai password=helixai123 database=helixai_db host=postgres port=5432
+        vault kv put secret/helixai/api service=helixai-api health_url=http://api:8000/health docs_url=http://api:8000/docs
+        vault kv put secret/helixai/monitoring grafana=http://grafana:3000 prometheus=http://prometheus:9090 loki=http://loki:3100
 
   jenkins:
     image: jenkins/jenkins:lts-jdk17

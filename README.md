@@ -317,6 +317,18 @@ Adminer:
   Database: helixai_db
 ```
 
+Useful local dashboard paths:
+
+```text
+Grafana HelixAI Overview: http://localhost:3001/d/helixai-overview/helixai-overview
+Prometheus Targets: http://localhost:9091/targets
+Prometheus HelixAI Metrics: http://localhost:9091/query?g0.expr=helixai_http_requests_total
+Vault HelixAI secrets:
+  secret/helixai/database
+  secret/helixai/api
+  secret/helixai/monitoring
+```
+
 ---
 
 ## 🌍 Live Demo
