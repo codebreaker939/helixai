@@ -38,12 +38,27 @@ jobs:
 
       - name: Smoke test API and database
         run: |
-          curl --fail --retry 20 --retry-delay 3 --retry-connrefused http://127.0.0.1:8000/health
-          curl --fail http://127.0.0.1:8000/
+          set -euo pipefail
+          trap 'docker compose -f docker/docker-compose.yml ps; docker compose -f docker/docker-compose.yml logs --no-color --tail=120' ERR
+
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent --show-error http://127.0.0.1:8000/health; then
+              break
+            fi
+
+            if [ "$attempt" -eq 30 ]; then
+              exit 1
+            fi
+
+            sleep 2
+          done
+
+          docker compose -f docker/docker-compose.yml ps
+          curl --fail --silent --show-error http://127.0.0.1:8000/
           curl --fail -X POST http://127.0.0.1:8000/patients \
             -H 'Content-Type: application/json' \
             -d '{"full_name":"GitHub Pipeline Smoke Test","age":42,"gender":"test","disease":"integration"}'
-          curl --fail http://127.0.0.1:8000/patients
+          curl --fail --silent --show-error http://127.0.0.1:8000/patients
 
       - name: Stop local stack
         if: always()
