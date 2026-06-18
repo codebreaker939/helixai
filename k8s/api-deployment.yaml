@@ -12,6 +12,7 @@ spec:
       labels:
         app: helixai-api
     spec:
+      serviceAccountName: helixai-api
       containers:
         - name: helixai-api
           image: helixai-api:v1
@@ -39,4 +40,19 @@ spec:
                 secretKeyRef:
                   name: helixai-secret
                   key: DATABASE_URL
-            
+            - name: HELIXAI_ENVIRONMENT
+              value: kubernetes
+            - name: KUBERNETES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: PROMETHEUS_URL
+              value: http://prometheus:9090
+            - name: GRAFANA_URL
+              value: http://grafana:3000
+            - name: VAULT_URL
+              value: http://vault:8200
+            - name: JENKINS_URL
+              value: http://jenkins:8080
+            - name: JENKINS_JOB
+              value: helixai

@@ -37,6 +37,45 @@ services:
 
     environment:
       DATABASE_URL: postgresql://helixai:helixai123@postgres:5432/helixai_db
+      HELIXAI_ENVIRONMENT: local
+      PROMETHEUS_URL: http://prometheus:9090
+      GRAFANA_URL: http://grafana:3000
+      LOKI_URL: http://loki:3100/ready
+      VAULT_URL: http://vault:8200
+      JENKINS_URL: http://jenkins:8080
+      JENKINS_JOB: helixai
+      JENKINS_USERNAME: ${JENKINS_USERNAME:-}
+      JENKINS_API_TOKEN: ${JENKINS_API_TOKEN:-}
+      KUBECONFIG: /root/.kube/config
+      KUBERNETES_HOST_OVERRIDE: host.docker.internal
+      CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000
+
+    volumes:
+      - ${HOME}/.kube/config:/root/.kube/config:ro
+
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  frontend:
+    build:
+      context: ../frontend
+      args:
+        VITE_GRAFANA_URL: http://localhost:${GRAFANA_PORT:-3001}
+        VITE_PROMETHEUS_URL: http://localhost:${PROMETHEUS_PORT:-9091}
+        VITE_JENKINS_PUBLIC_URL: http://localhost:${JENKINS_PORT:-8081}
+        VITE_VAULT_URL: http://localhost:${VAULT_PORT:-8200}
+
+    container_name: helixai-frontend
+
+    depends_on:
+      api:
+        condition: service_healthy
+
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
 
   prometheus:
     image: prom/prometheus:v3.7.3
@@ -160,7 +199,8 @@ services:
         vault kv put secret/helixai/monitoring grafana=http://grafana:3000 prometheus=http://prometheus:9090 loki=http://loki:3100
 
   jenkins:
-    image: jenkins/jenkins:lts-jdk17
+    build:
+      context: ./jenkins
 
     container_name: helixai-jenkins
 
@@ -173,6 +213,8 @@ services:
 
     volumes:
       - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ..:/workspace/helixai:ro
 
   adminer:
     image: adminer:5.4.1
